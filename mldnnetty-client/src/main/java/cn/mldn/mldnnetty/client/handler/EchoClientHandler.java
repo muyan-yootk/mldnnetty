@@ -3,6 +3,8 @@ package cn.mldn.mldnnetty.client.handler;
 import cn.mldn.util.InputUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
@@ -28,7 +30,15 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 			String inputStr = InputUtil.getString("请输入要发送的信息：") ;
 			ByteBuf newBuf = Unpooled.buffer(inputStr.length()) ;
 			newBuf.writeBytes(inputStr.getBytes()) ; // 写入数据
-			ctx.writeAndFlush(newBuf) ; // 发送数据
+		ChannelFuture future = ctx.writeAndFlush(newBuf) ; // 发送数据
+		future.addListener(new ChannelFutureListener() {	// 进行监听的回调处理
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				if (future.isSuccess()) {	// 操作成功
+					System.out.println("********** 客户端回信息发送成功。");
+				}
+			}}) ;
+
 		}
 	}
 }

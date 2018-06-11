@@ -2,6 +2,8 @@ package cn.mldn.mldnnetty.server.handle;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
@@ -23,14 +25,6 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 		// ctx.writeAndFlush(message) ; // 消息发送
 	}
 	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		System.err.println("〖服务器端-生命周期〗通道注册。");
-	}
-	@Override
-	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		System.err.println("〖服务器端-生命周期〗通道注销。");
-	}
-	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		System.err.println("〖服务器端-生命周期〗通道关闭。");
 	}
@@ -50,7 +44,14 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 		}
 		ByteBuf echoBuf = Unpooled.buffer(echoContent.length()) ;
 		echoBuf.writeBytes(echoContent.getBytes()) ;
-		ctx.writeAndFlush(echoBuf) ;
+		ChannelFuture future = ctx.writeAndFlush(echoBuf) ;
+		future.addListener(new ChannelFutureListener() {	// 进行监听的回调处理
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				if (future.isSuccess()) {	// 操作成功
+					System.out.println("********** 服务器端回应客户端请求成功。");
+				}
+			}}) ;
 	}
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
