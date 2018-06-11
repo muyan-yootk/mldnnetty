@@ -14,7 +14,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		System.err.println("〖服务器端-生命周期〗通道连接激活。");
+		// System.err.println("〖服务器端-生命周期〗通道连接激活。");
 		// 1、对于发送的消息可以发送中文或者是一些标记（ok标记）
 		// byte data [] = "【服务器端】连接通道已经建立成功，可以开始进行服务器通信处理".getBytes() ;
 		// 2、Nio的处理本质是需要进行缓冲区的处理
@@ -26,7 +26,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 	}
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		System.err.println("〖服务器端-生命周期〗通道关闭。");
+		// System.err.println("〖服务器端-生命周期〗通道关闭。");
 	}
 	/**
 	 * 当接收到消息之后会自动调用此方法对消息内容进行处理；
@@ -34,29 +34,16 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		ByteBuf in = (ByteBuf) msg ; // 1、接收消息内容
-		String inputStr = in.toString(CharsetUtil.UTF_8) ; // 2、得到用户发送的数据
+		System.out.println(msg);
+		String inputStr = (String) msg ; // 2、得到用户发送的数据
 		String echoContent = "【ECHO】" + inputStr ; // 3、回应的消息内容
 		if ("exit".equalsIgnoreCase(inputStr)) {	// 表示发送结束
 			echoContent = "quit" ; // 结束的字符串信息 
 		} else if (inputStr.startsWith("userid")) {	// 该操作为验证数据信息
 			echoContent = "【服务器端】欢迎“" + inputStr.split(":")[1] + "”登录访问，连接通道已经建立成功，可以开始进行服务器通信处理";
 		}
-		ByteBuf echoBuf = Unpooled.buffer(echoContent.length()) ;
-		echoBuf.writeBytes(echoContent.getBytes()) ;
-		ChannelFuture future = ctx.writeAndFlush(echoBuf) ;
-		future.addListener(new ChannelFutureListener() {	// 进行监听的回调处理
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				if (future.isSuccess()) {	// 操作成功
-					System.out.println("********** 服务器端回应客户端请求成功。");
-				}
-			}}) ;
-	}
-	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		System.err.println("〖服务器端-生命周期〗信息读取完毕。");
-	}
+		ctx.writeAndFlush(echoContent) ;
+	} 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		System.err.println("〖服务器端-生命周期〗服务器出现异常。");
