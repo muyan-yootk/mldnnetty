@@ -1,22 +1,25 @@
 package cn.mldn.mldnnetty.client;
 
-import cn.mldn.commons.DefaultNettyInfo;
 import cn.mldn.commons.ServerInfo;
-import cn.mldn.mldnnetty.client.handler.EchoClientHandler;
+import cn.mldn.mldnnetty.client.handler.ObjectClientHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
-public class EchoClient {
+public class ObjectClient {
 	public void run() throws Exception  {	// 启动客户端程序
 		// 1、创建一个进行数据交互的处理线程池
 		EventLoopGroup group = new NioEventLoopGroup() ;
@@ -27,14 +30,12 @@ public class EchoClient {
 			clientBootstrap.handler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				protected void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024,
-							Unpooled.copiedBuffer(DefaultNettyInfo.SEPARATOR.getBytes()))) ;
-
 					// 设置每行数据读取的最大行数
-//					ch.pipeline().addLast(new LineBasedFrameDecoder(1024)) ;
-					ch.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8)) ;
-					ch.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8)) ;
-					ch.pipeline().addLast(new EchoClientHandler()) ; // 自定义程序处理逻辑
+					ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 3, 0, 3));
+					ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
+					ch.pipeline().addLast(new LengthFieldPrepender(3));	// 与类中的属性个数相同
+					ch.pipeline().addLast(new ObjectEncoder()) ;
+					ch.pipeline().addLast(new ObjectClientHandler()) ; // 自定义程序处理逻辑
 				} 
 			}) ;
 			// 连接远程服务器端
