@@ -5,12 +5,12 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
 public class EchoClientHandler extends ChannelHandlerAdapter {
-	private static final int REPEAT = 30 ; // 消息重复发送500次
+	private static final int REPEAT = 500 ; // 消息重复发送500次
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {// 客户端的连接激活
 		String inputStr = InputUtil.getString("请输入要发送的信息：") ;
 		for (int x = 0 ; x < REPEAT ; x ++) {
-			ctx.writeAndFlush(inputStr + " - " + x) ; // 发送数据
+			ctx.writeAndFlush(inputStr + " - " + x + System.getProperty("line.separator")) ; // 发送数据
 		}
 	}	
 	

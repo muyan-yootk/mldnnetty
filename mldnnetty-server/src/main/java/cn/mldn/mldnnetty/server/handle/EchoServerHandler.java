@@ -12,7 +12,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		String inputStr = (String) msg ; // 2、得到用户发送的数据
 		System.err.println("｛服务器｝" + inputStr);
-		String echoContent = "【ECHO】" + inputStr ; // 3、回应的消息内容
+		String echoContent = "【ECHO】" + inputStr + System.getProperty("line.separator") ; // 3、回应的消息内容
 		ctx.writeAndFlush(echoContent) ;
 	} 
 	@Override
