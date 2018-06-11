@@ -2,12 +2,15 @@ package cn.mldn.vo;
 
 import java.io.Serializable;
 
+import org.msgpack.annotation.Message;
+
 @SuppressWarnings("serial")
+@Message
 public class Member implements Serializable {
 	private String name ;
 	private Integer age ;
 	private Double salary ;
-	public String getName() {
+	public String getName() { 
 		return name;
 	}
 	public void setName(String name) {

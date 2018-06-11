@@ -2,6 +2,8 @@ package cn.mldn.mldnnetty.server;
 
 import cn.mldn.commons.ServerInfo;
 import cn.mldn.mldnnetty.server.handle.ObjectServerHandler;
+import cn.mldn.util.serial.MessagePackDecoder;
+import cn.mldn.util.serial.MessagePackEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,9 +14,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class ObjectServer {
 	public void run() throws Exception {	// 程序的运行方法，异常全部抛出
@@ -30,17 +29,17 @@ public class ObjectServer {
 			serverBootstrap.group(boosGroup, workGroup) ;
 			// 4、指明当前服务器的运行形式，基于NIO的ServerSocket实现
 			serverBootstrap.channel(NioServerSocketChannel.class) ;
-			// 5、进行Netty数据处理的过滤器配置（责任链设计模式）
-			serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-				@Override
-				protected void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 3, 0, 3));
-					ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
-					ch.pipeline().addLast(new LengthFieldPrepender(3));	// 与类中的属性个数相同
-					ch.pipeline().addLast(new ObjectEncoder()) ;
-					ch.pipeline().addLast(new ObjectServerHandler()) ; // 自定义程序处理逻辑
-				} 
-			}) ;
+	// 5、进行Netty数据处理的过滤器配置（责任链设计模式）
+	serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+		@Override
+		protected void initChannel(SocketChannel ch) throws Exception {
+			ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 3, 0, 3));
+			ch.pipeline().addLast(new MessagePackDecoder()) ;
+			ch.pipeline().addLast(new LengthFieldPrepender(3));	// 与类中的属性个数相同
+			ch.pipeline().addLast(new MessagePackEncoder()) ;
+			ch.pipeline().addLast(new ObjectServerHandler()) ; // 自定义程序处理逻辑
+		} 
+	}) ; 
 			// 6、由于当前的服务器主要实现的是一个TCP的回应处理程序，那么在这样的情况下就必须进行一些TCP属性配置
 			serverBootstrap.option(ChannelOption.SO_BACKLOG, 64) ; // 当处理线程全满时的最大等待队列长度
 			// 7、绑定服务器端口并且进行服务的启动

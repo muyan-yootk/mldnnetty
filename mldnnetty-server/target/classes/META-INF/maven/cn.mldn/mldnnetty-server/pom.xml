@@ -25,5 +25,9 @@
 			<groupId>cn.mldn</groupId>
 			<artifactId>mldnnetty-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>cn.mldn</groupId>
+			<artifactId>mldnnetty-util</artifactId>
+		</dependency>
 	</dependencies>
 </project>

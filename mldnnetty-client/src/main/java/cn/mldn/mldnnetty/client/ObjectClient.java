@@ -2,6 +2,8 @@ package cn.mldn.mldnnetty.client;
 
 import cn.mldn.commons.ServerInfo;
 import cn.mldn.mldnnetty.client.handler.ObjectClientHandler;
+import cn.mldn.util.serial.MessagePackDecoder;
+import cn.mldn.util.serial.MessagePackEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -32,9 +34,9 @@ public class ObjectClient {
 				protected void initChannel(SocketChannel ch) throws Exception {
 					// 设置每行数据读取的最大行数
 					ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 3, 0, 3));
-					ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
+					ch.pipeline().addLast(new MessagePackDecoder()) ;
 					ch.pipeline().addLast(new LengthFieldPrepender(3));	// 与类中的属性个数相同
-					ch.pipeline().addLast(new ObjectEncoder()) ;
+					ch.pipeline().addLast(new MessagePackEncoder()) ;
 					ch.pipeline().addLast(new ObjectClientHandler()) ; // 自定义程序处理逻辑
 				} 
 			}) ;

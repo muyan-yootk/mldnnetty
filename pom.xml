@@ -18,9 +18,16 @@
 		<junit.version>4.12</junit.version>
 		<netty.version>5.0.0.Alpha2</netty.version>
 		<mldnnetty.version>0.0.1</mldnnetty.version>
+		<msgpack.version>0.6.12</msgpack.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.msgpack</groupId>
+				<artifactId>msgpack</artifactId>
+				<version>${msgpack.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>cn.mldn</groupId>
 				<artifactId>mldnnetty-api</artifactId>
