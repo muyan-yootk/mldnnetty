@@ -9,6 +9,14 @@ import io.netty.util.CharsetUtil;
 
 public class EchoClientHandler extends ChannelHandlerAdapter {
 	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {// 客户端的连接激活
+		String data = "userid:mldnjava" ; // 当前建立连接时用户的身份信息
+		ByteBuf buf = Unpooled.buffer(data.length()) ;
+		buf.writeBytes(data.getBytes()) ;
+		ctx.writeAndFlush(buf) ;
+	}	
+	
+	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		ByteBuf buf = (ByteBuf) msg ; // 接收远程发回的数据信息
 		String content = buf.toString(CharsetUtil.UTF_8) ; // 接收数据
