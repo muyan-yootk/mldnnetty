@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.mldn</groupId>
+	<artifactId>mldnnetty</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+
+	<name>mldnnetty</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jdk.version>1.8</jdk.version>
+		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<junit.version>4.12</junit.version>
+		<netty.version>5.0.0.Alpha2</netty.version>
+		<mldnnetty.version>0.0.1</mldnnetty.version>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>cn.mldn</groupId>
+				<artifactId>mldnnetty-api</artifactId>
+				<version>${mldnnetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-all</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${jdk.version}</source><!-- 源代码使用的开发版本 -->
+					<target>${jdk.version}</target><!-- 需要生成的目标class文件的编译版本 -->
+					<encode>${project.build.sourceEncoding}</encode>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<modules>
+		<module>mldnnetty-api</module>
+		<module>mldnnetty-server</module>
+		<module>mldnnetty-client</module>
+	</modules>
+</project>
