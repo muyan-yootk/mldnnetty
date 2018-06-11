@@ -20,9 +20,16 @@
 		<mldnnetty.version>0.0.1</mldnnetty.version>
 		<msgpack.version>0.6.12</msgpack.version>
 		<jboss-marshalling.version>2.0.5.Final</jboss-marshalling.version>
+		<fastjson.version>1.2.47</fastjson.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+	<dependency>
+		<groupId>com.alibaba</groupId>
+		<artifactId>fastjson</artifactId>
+		<version>${fastjson.version}</version>
+	</dependency>
+
 			<dependency>
 				<groupId>org.jboss.marshalling</groupId>
 				<artifactId>jboss-marshalling</artifactId>

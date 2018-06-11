@@ -2,7 +2,8 @@ package cn.mldn.mldnnetty.server;
 
 import cn.mldn.commons.ServerInfo;
 import cn.mldn.mldnnetty.server.handle.ObjectServerHandler;
-import cn.mldn.util.serial.MarshallingCodeFactory;
+import cn.mldn.util.serial.JSONDecoder;
+import cn.mldn.util.serial.JSONEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -33,9 +34,9 @@ public class ObjectServer {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 3, 0, 3));
-			ch.pipeline().addLast(MarshallingCodeFactory.builderDecorder()) ;
+			ch.pipeline().addLast(new JSONDecoder()) ;
 			ch.pipeline().addLast(new LengthFieldPrepender(3));	// 与类中的属性个数相同
-			ch.pipeline().addLast(MarshallingCodeFactory.builderEncorder()) ;
+			ch.pipeline().addLast(new JSONEncoder()) ; 
 			ch.pipeline().addLast(new ObjectServerHandler()) ; // 自定义程序处理逻辑
 		} 
 	}) ; 
