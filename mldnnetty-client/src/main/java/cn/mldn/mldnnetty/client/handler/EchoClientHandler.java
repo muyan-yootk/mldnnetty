@@ -2,6 +2,7 @@ package cn.mldn.mldnnetty.client.handler;
 
 import java.util.concurrent.TimeUnit;
 
+import cn.mldn.commons.DefaultNettyInfo;
 import cn.mldn.util.InputUtil;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,7 +13,7 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {// 客户端的连接激活
 		String inputStr = InputUtil.getString("请输入要发送的信息：") ;
 		for (int x = 0 ; x < REPEAT ; x ++) {
-			ctx.writeAndFlush(inputStr + " - " + x + System.getProperty("line.separator")) ; // 发送数据
+			ctx.writeAndFlush(inputStr + " - " + x + DefaultNettyInfo.SEPARATOR) ; // 发送数据
 		}
 	}	
 	

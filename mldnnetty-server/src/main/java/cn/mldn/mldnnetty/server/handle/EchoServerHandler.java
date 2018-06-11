@@ -1,5 +1,6 @@
 package cn.mldn.mldnnetty.server.handle;
 
+import cn.mldn.commons.DefaultNettyInfo;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -12,7 +13,7 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		String inputStr = (String) msg ; // 2、得到用户发送的数据
 		System.err.println("｛服务器｝" + inputStr);
-		String echoContent = "【ECHO】" + inputStr + System.getProperty("line.separator") ; // 3、回应的消息内容
+		String echoContent = "【ECHO】" + inputStr + DefaultNettyInfo.SEPARATOR ;
 		ctx.writeAndFlush(echoContent) ;
 	} 
 	@Override
