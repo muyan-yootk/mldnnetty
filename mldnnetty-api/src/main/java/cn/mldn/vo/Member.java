@@ -2,10 +2,7 @@ package cn.mldn.vo;
 
 import java.io.Serializable;
 
-import org.msgpack.annotation.Message;
-
 @SuppressWarnings("serial")
-@Message
 public class Member implements Serializable {
 	private String name ;
 	private Integer age ;

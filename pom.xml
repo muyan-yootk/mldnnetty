@@ -19,9 +19,22 @@
 		<netty.version>5.0.0.Alpha2</netty.version>
 		<mldnnetty.version>0.0.1</mldnnetty.version>
 		<msgpack.version>0.6.12</msgpack.version>
+		<jboss-marshalling.version>2.0.5.Final</jboss-marshalling.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.jboss.marshalling</groupId>
+				<artifactId>jboss-marshalling</artifactId>
+				<version>${jboss-marshalling.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.marshalling</groupId>
+				<artifactId>jboss-marshalling-serial</artifactId>
+				<version>${jboss-marshalling.version}</version>
+			</dependency>
+
+
 			<dependency>
 				<groupId>org.msgpack</groupId>
 				<artifactId>msgpack</artifactId>

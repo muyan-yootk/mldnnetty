@@ -1,7 +1,5 @@
 package cn.mldn.mldnnetty.server.handle;
 
-import org.msgpack.type.ArrayValue;
-
 import cn.mldn.vo.Member;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +11,6 @@ public class ObjectServerHandler extends ChannelHandlerAdapter {
 	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//		ArrayValue value = (ArrayValue) msg ;
-//		System.out.println(value);
 		
 		Member member = (Member) msg ; 	// 直接接收到Member对象
 		System.err.println("｛服务器｝" + member); // 服务器端接收到内容
