@@ -27,6 +27,11 @@
 				<version>${mldnnetty.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>cn.mldn</groupId>
+				<artifactId>mldnnetty-util</artifactId>
+				<version>${mldnnetty.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-all</artifactId>
 				<version>${netty.version}</version>
@@ -59,5 +64,6 @@
 		<module>mldnnetty-api</module>
 		<module>mldnnetty-server</module>
 		<module>mldnnetty-client</module>
+		<module>mldnnetty-util</module>
 	</modules>
 </project>
