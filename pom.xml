@@ -65,7 +65,5 @@
 		<module>mldnnetty-server</module>
 		<module>mldnnetty-client</module>
 		<module>mldnnetty-util</module>
-		<module>mldnnetty-udp-server</module>
-		<module>mldnnetty-udp-client</module>
 	</modules>
 </project>
