@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import cn.mldn.commons.ServerInfo;
 import cn.mldn.commons.http.HttpSession;
 import cn.mldn.mldnnetty.server.http.HttpSessionManager;
 import io.netty.buffer.ByteBuf;
@@ -66,6 +67,8 @@ public class RequestPageUtil {
 			}
 		} else if ("/favicon.ico".equals(uri)) {
 			this.favicon() ;
+		} else if (uri.startsWith("http://" + ServerInfo.HOSTNAME + ":" + ServerInfo.PORT + "/images/")) { // 通过netty客户端要下载数据
+			this.images(); 
 		}
 	} 
 	private void favicon() {
