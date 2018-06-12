@@ -1,10 +1,10 @@
 package cn.mldn.mldnnetty.main;
 
-import cn.mldn.mldnnetty.server.HttpServer;
+import cn.mldn.mldnnetty.server.WebSocketServer;
 
-public class HttpServerStart {
+public class WebSocketServerStart {
 	public static void main(String[] args) throws Exception {
 		System.out.println("************* 服务器正常启动 *************");
-		new HttpServer().run(); 
+		new WebSocketServer().run(); 
 	}
 }
