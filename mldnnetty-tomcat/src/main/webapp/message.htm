@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>WebSocket通讯</title>
+	<meta charset="UTF-8"/>
+	<script type="text/javascript">
+		url = "ws://localhost/mldnnetty-tomcat/message" ; // 通讯地址
+		window.onload = function() {	// 进行加载时间处理
+			webSocket = new WebSocket(url) ; // 创建WebSocket对象
+			webSocket.onopen = function() {
+				document.getElementById("contentDiv").innerHTML += "<p>服务器连接成功，请进行消息的处理。</p>" ;
+			}
+			webSocket.onclose = function() {
+				document.getElementById("contentDiv").innerHTML += "<p>已经和服务器断开连接。</p>" ;
+			}
+			document.getElementById("sendBut").addEventListener("click",function(){
+				info = document.getElementById("msg").value ;
+				webSocket.send(info) ; // 发送请求
+				webSocket.onmessage = function(obj) {	// 进行消息回应
+					document.getElementById("contentDiv").innerHTML += "<p>" + obj.data + "</p>" ;
+					document.getElementById("msg").value = "" ;
+				}
+			},false) ;
+		}
+	</script>
+</head>
+<body>
+<div id="contentDiv" style="height :300px; overflow:scroll ; background : lightblue">
+
+</div>
+<div id="inputDiv">
+	请输入信息：<input type="text" name="msg" id="msg">
+	<button type="button" id="sendBut">发送</button>
+</div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -21,14 +22,40 @@
 		<msgpack.version>0.6.12</msgpack.version>
 		<jboss-marshalling.version>2.0.5.Final</jboss-marshalling.version>
 		<fastjson.version>1.2.47</fastjson.version>
+		<servlet.version>4.0.1</servlet.version>
+		<jsp.version>2.2</jsp.version>
+		<websocket.version>1.1</websocket.version>
+		<jstl.version>1.2</jstl.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-	<dependency>
-		<groupId>com.alibaba</groupId>
-		<artifactId>fastjson</artifactId>
-		<version>${fastjson.version}</version>
-	</dependency>
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>${jsp.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${servlet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${jstl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.websocket</groupId>
+				<artifactId>javax.websocket-api</artifactId>
+				<version>${websocket.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.jboss.marshalling</groupId>
@@ -92,5 +119,6 @@
 		<module>mldnnetty-server</module>
 		<module>mldnnetty-client</module>
 		<module>mldnnetty-util</module>
+		<module>mldnnetty-tomcat</module>
 	</modules>
 </project>
