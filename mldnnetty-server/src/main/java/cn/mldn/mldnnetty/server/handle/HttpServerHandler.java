@@ -47,17 +47,19 @@ public class HttpServerHandler extends ChannelHandlerAdapter {
 		if (cookieStr == null || "".equals(cookieStr)) {
 			return false ; // 没有指定内容存在
 		}
-		Set<Cookie> set = ServerCookieDecoder.decode(cookieStr) ; // 通过字符串解析出全部的Cookie数据
-		Iterator<Cookie> iter = set.iterator() ; 
-		while (iter.hasNext()) {
-			Cookie cookie = iter.next() ; // 获取每一个Cookie的内容
-			if (HttpSession.SESSIONID.equals(cookie.name())) {	// 存在有指定名称的Cookie
-				if (HttpSessionManager.isExists(cookie.value())) {	// 该session存在
-					this.session = HttpSessionManager.getSession(cookie.value()) ; 
-					return true ;
+		try {
+			Set<Cookie> set = ServerCookieDecoder.decode(cookieStr) ; // 通过字符串解析出全部的Cookie数据
+			Iterator<Cookie> iter = set.iterator() ; 
+			while (iter.hasNext()) {
+				Cookie cookie = iter.next() ; // 获取每一个Cookie的内容
+				if (HttpSession.SESSIONID.equals(cookie.name())) {	// 存在有指定名称的Cookie
+					if (HttpSessionManager.isExists(cookie.value())) {	// 该session存在
+						this.session = HttpSessionManager.getSession(cookie.value()) ; 
+						return true ;
+					} 
 				} 
-			} 
-		}
+			}
+		} catch (Exception e) {}
 		return false ;
 	}
 	

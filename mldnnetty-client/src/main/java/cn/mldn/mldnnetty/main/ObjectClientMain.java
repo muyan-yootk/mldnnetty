@@ -1,9 +1,9 @@
 package cn.mldn.mldnnetty.main;
 
-import cn.mldn.mldnnetty.client.ObjectClient;
+import cn.mldn.mldnnetty.client.HttpClient;
 
 public class ObjectClientMain {
 	public static void main(String[] args) throws Exception {
-		new ObjectClient().run() ;	// 客户端运行
+		new HttpClient().run() ;	// 客户端运行
 	}
 }
