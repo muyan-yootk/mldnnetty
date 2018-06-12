@@ -52,30 +52,34 @@ public class RequestPageUtil {
 	}
 	
 	private void param() {
+		System.out.println("MIME = " + this.request.headers().get(HttpHeaderNames.CONTENT_TYPE));
 		RequestParameterUtil paramUtil = new RequestParameterUtil(this.request, this.content);
 		String content = "<html><head><title>MLDN-NETTY开发框架</title></head>" + 
 				"<body><h1>www.mldn.cn</h1>"
 				+ "<h1>【请求参数】msg = " + paramUtil.getParameter("msg") + "</h1>"
 				+ "<h1>【请求参数】inst = " + paramUtil.getParameterValues("inst") + "</h1>"
+				+ "<h1>【请求参数】photo = " + paramUtil.getUploadFile("photo") + "</h1>"
 				+ "</body></html>";
+		paramUtil.saveFile("photo") ;
 		this.responseWrite(content); 
 	}
 	
 	private void form() {
 		String content = "<html><head><title>MLDN-NETTY开发框架</title></head>" + 
 				"<body><h1>www.mldn.cn</h1>"
-				+ "<form method='post' action='/param'>"
+				+ "<form method='post' action='/param' enctype='multipart/form-data'>"
 				+ "	信息：<input type='text' name='msg' id='msg' value='魔乐科技（MLDN）'><br>"
 				+ "	兴趣：<input type='checkbox' name='inst' id='inst' value='唱歌' checked>唱歌"
 				+ "		<input type='checkbox' name='inst' id='inst' value='看书' checked>看书"
 				+ "		<input type='checkbox' name='inst' id='inst' value='学习' checked>学习"
 				+ "		<input type='checkbox' name='inst' id='inst' value='旅游' checked>旅游<br>"
+				+ "照片：	<input type='file' name='photo'><br>"
 				+ "<input type='submit' value='提交'>"
 				+ "<input type='reset' value='重置'>"
 				+ "</form>"
 				+ "</body></html>";
 		this.responseWrite(content); 
-	}
+	} 
 	
 	/**
 	 * 进行Session数据的创建

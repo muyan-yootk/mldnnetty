@@ -10,10 +10,16 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.multipart.DiskFileUpload;
 
 public class HttpServer {
+	static {
+		DiskFileUpload.baseDirectory = System.getProperty("user.dir") + "/upload/" ;
+	}
+	
 	public void run() throws Exception {	// 程序的运行方法，异常全部抛出
 		// 1、在Netty里面服务器端的程序需要准备出两个线程池
 		// 1-1、第一个线程池为接收用户请求连接的线程池；
@@ -31,8 +37,9 @@ public class HttpServer {
 			serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				protected void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast(new HttpResponseEncoder()) ;
 					ch.pipeline().addLast(new HttpRequestDecoder()) ;
+					ch.pipeline().addLast(new HttpObjectAggregator(1024 * 1024 * 100)) ; // 设置最大上传容量为10M
+					ch.pipeline().addLast(new HttpResponseEncoder()) ;
 					ch.pipeline().addLast(new HttpServerHandler()) ; // 自定义程序处理逻辑
 				} 
 			}) ; 
