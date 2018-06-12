@@ -1,25 +1,37 @@
 package cn.mldn.mldnnetty.server.page;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.activation.MimetypesFileTypeMap;
 
 import cn.mldn.commons.http.HttpSession;
 import cn.mldn.mldnnetty.server.http.HttpSessionManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelProgressiveFuture;
+import io.netty.channel.ChannelProgressiveFutureListener;
 import io.netty.handler.codec.http.Cookie;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderUtil;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.ServerCookieDecoder;
 import io.netty.handler.codec.http.ServerCookieEncoder;
+import io.netty.handler.codec.http.multipart.DiskFileUpload;
+import io.netty.handler.stream.ChunkedFile;
 import io.netty.util.CharsetUtil;
 
 public class RequestPageUtil {
@@ -36,33 +48,92 @@ public class RequestPageUtil {
 		this.handleUrl(this.request.uri()); // 根据路径选择要处理的方法
 	}
 	
-	private void handleUrl(String uri) {
-		System.out.println("uri = " + uri + "、method = " + this.request.method());
-		if ("/form".equals(uri)) {	// 现在做的是一个表单路径
+	private void handleUrl(String uri) { 
+		// System.out.println("uri = " + uri + "、method = " + this.request.method());
+		if ("/form".equals(uri)) {	// 现在做的是一个表单路径 
 			if (HttpMethod.GET.equals(this.request.method())) {
 				this.form();
-			}
+			} 
 		} else if (uri.startsWith("/param")) {	// 处理param的请求操作
 			if (HttpMethod.POST.equals(this.request.method())) {
 				if (this.content != null) {
 					this.param();  // 进行所有请求参数的接收
 				}
 			}
+		} else if (uri.startsWith("/images")) {	// 此时是一个图片的访问路径
+			if (HttpMethod.GET.equals(this.request.method())) {
+				this.images() ;
+			}
+		} else if ("/favicon.ico".equals(uri)) {
+			this.favicon() ;
+		}
+	} 
+	private void favicon() {
+		try {
+			this.sendImage("mldn.ico");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	private void images() {
+		if (this.content != null) { // 进行内容处理
+			String fileName = this.request.uri().substring(this.request.uri().lastIndexOf("/") + 1) ;
+			// System.out.println("图片名称 = " + fileName + "、content = " + this.content);
+			try {
+				this.sendImage(fileName); // 发送图片
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
+	private void sendImage(String fileName) throws Exception { // 根据图片名称进行图片发送
+		String filePath = DiskFileUpload.baseDirectory + fileName ; // 图片路径
+		File sendFile = new File(filePath) ; // 定义要发送的图片位置
+		// 创建一个HTTP回应对象，设置HTTP协议以及状态码
+		HttpResponse imageResponse = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK) ;
+		HttpHeaderUtil.setContentLength(imageResponse, sendFile.length());	// 设置回应数据长度
+		// 对于响应类型的处理应该可以根据文件动态获取
+		MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap() ;
+		imageResponse.headers().set(HttpHeaderNames.CONTENT_TYPE,mimeMap.getContentType(sendFile)) ;
+		if (HttpHeaderUtil.isKeepAlive(this.request)) {	// 判断该请求是否还活着
+			imageResponse.headers().set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE) ; // 设置存活的状态
+		}
+		this.ctx.write(imageResponse) ;// 回应请求
+		this.ctx.write(new ChunkedFile(sendFile),ctx.newProgressivePromise().addListener(new ChannelProgressiveFutureListener() {
+			@Override
+			public void operationComplete(ChannelProgressiveFuture future) throws Exception {
+				System.out.println("************** 图片传输完成。");
+			}
+			@Override
+			public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) throws Exception {
+				if (total < 0) {
+					System.out.println("### 传输速度：" + progress);
+				} else {
+					System.out.println("### 传输速度：" + progress + " / " + total);
+				}
+			}
+		})) ;
+		// 这个时候对于发送的图片客户端是无法收取的，因为在HTTP协议里面还需要传入一个空消息内容才表示传输完成
+		ChannelFuture lastFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT) ; // 发送空消息
+		if (HttpHeaderUtil.isKeepAlive(this.request)) {	// 依然还在连接
+			lastFuture.addListener(ChannelFutureListener.CLOSE) ; // 关闭发送通道
+		}
+	} 
+	
 	private void param() {
 		RequestParameterUtil paramUtil = new RequestParameterUtil(this.request, this.content);
+		String fileName = paramUtil.saveFile("photo") ;
 		String content = "<html><head><title>MLDN-NETTY开发框架</title></head>" + 
 				"<body><h1>www.mldn.cn</h1>"
 				+ "<h1>【请求参数】msg = " + paramUtil.getParameter("msg") + "</h1>"
 				+ "<h1>【请求参数】inst = " + paramUtil.getParameterValues("inst") + "</h1>"
-				+ "<h1>【请求参数】photo = " + paramUtil.getUploadFile("photo") + "</h1>"
+				+ "<h1>【请求参数】photo = " + fileName + "</h1>"
+				+ "<img src='/images/" + fileName + "'>"
 				+ "</body></html>";
-		paramUtil.saveFile("photo") ;
 		this.responseWrite(content); 
 	}
-	
+	 
 	private void form() {
 		String content = "<html><head><title>MLDN-NETTY开发框架</title></head>" + 
 				"<body><h1>www.mldn.cn</h1>"
