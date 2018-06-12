@@ -52,7 +52,6 @@ public class RequestPageUtil {
 	}
 	
 	private void param() {
-		System.out.println("MIME = " + this.request.headers().get(HttpHeaderNames.CONTENT_TYPE));
 		RequestParameterUtil paramUtil = new RequestParameterUtil(this.request, this.content);
 		String content = "<html><head><title>MLDN-NETTY开发框架</title></head>" + 
 				"<body><h1>www.mldn.cn</h1>"
