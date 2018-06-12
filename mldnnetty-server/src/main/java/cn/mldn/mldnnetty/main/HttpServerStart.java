@@ -1,10 +1,10 @@
 package cn.mldn.mldnnetty.main;
 
-import cn.mldn.mldnnetty.server.ObjectServer;
+import cn.mldn.mldnnetty.server.HttpServer;
 
-public class ObjectServerStart {
+public class HttpServerStart {
 	public static void main(String[] args) throws Exception {
 		System.out.println("************* 服务器正常启动 *************");
-		new ObjectServer().run(); 
+		new HttpServer().run(); 
 	}
 }
